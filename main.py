@@ -3,6 +3,8 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import os
+import socket
+from dotenv import set_key
 from supabase import create_client, Client
 from flask import Flask, jsonify, request
 
@@ -79,6 +81,27 @@ def get_data():
     data = {'san pham goi y': ket_qua}
     return jsonify(data)
 
+# ✅ Hàm lấy IP LAN
+def get_lan_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return "127.0.0.1"
+
+# ✅ Ghi IP vào file .env
+def update_env_file(ip):
+    env_path = ".env"
+    if not os.path.exists(env_path):
+        with open(env_path, "w") as f:
+            f.write("")
+    set_key(env_path, "LOCAL_IPV4", ip)
+
 if __name__ == '__main__':
-    # ✅ Cho phép truy cập từ thiết bị khác trong mạng LAN
+    lan_ip = get_lan_ip()
+    update_env_file(lan_ip)
+    print(f"✅ Địa chỉ IP LAN hiện tại: {lan_ip} (đã ghi vào .env)")
     app.run(host="0.0.0.0", port=5555)
