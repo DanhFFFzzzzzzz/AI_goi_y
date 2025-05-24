@@ -36,10 +36,10 @@ finally:
         conn.close()
         print("Đã đóng kết nối.")
 
-feature = ['price', 'description']
+feature = ['price', 'description', 'category']
 
 def combine_features(row):
-    return str(row['price']) + ' ' + str(row['description'])
+    return str(row['price']) + ' ' + str(row['description']) + ' ' + str(row['category'])
 
 df_sanpham['combined_features'] = df_sanpham.apply(combine_features, axis=1)
 
